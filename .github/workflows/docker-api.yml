@@ -10,7 +10,7 @@ on:
     branches: ["main"]
     # Publish semver tags as releases.
     tags: ["v*.*.*"]
-    paths: ["src/**", ".github/workflows/docker-api.yml"]
+    paths: ["src/**", ".github/workflows/docker-api.yml", '!client/**']
   # pull_request:
   #   branches: [ "master" ]
 

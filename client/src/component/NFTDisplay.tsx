@@ -48,7 +48,7 @@ const NFTDisplay: React.FC<NFTDisplayProps> = ({ nftObject }) => {
           },
         })
         .then((res) => res.data),
-        axios.get("http://localhost:3000/v1/nfts/classify", {
+        axios.get("https://sui-nft-spam-api.getnimbus.io/v1/nfts/classify", {
           params: {
             address: id,
           },

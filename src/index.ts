@@ -14,17 +14,10 @@ app.use(morgan("tiny"));
 app.use(
   cors({
     origin: [
-      "https://getnimbus.io",
-      "https://beta.getnimbus.io",
-      "https://app.getnimbus.io",
       "http://localhost:3000",
       "http://localhost:3001",
       "http://localhost:5173",
-      "http://localhost:19006",
-      "https://nimbus-hackathon.vercel.app",
-      "https://xnfts.s3.us-west-2.amazonaws.com", // xNFT
-      "https://twa.getnimbus.io",
-      "https://airdrop.getnimbus.io",
+      /getnimbus\.io$/,
       /onrender\.com$/,
       /pages\.dev$/,
       /vercel\.app$/,

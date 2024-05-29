@@ -117,7 +117,6 @@ const spamNftTokens = [
   "not_imageExists",
   "containsEmoji",
   "imageContainsUrl",
-  "not_listingMarketplace",
   "not_collectionExists",
 ];
 

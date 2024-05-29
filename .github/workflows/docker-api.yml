@@ -74,3 +74,18 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Deploy App to CapRover
+        uses: caprover/deploy-from-github@main
+        with:
+          server: "${{ secrets.CAPROVER_SERVER }}"
+          app: "${{ secrets.API_APP_NAME }}"
+          token: "${{ secrets.API_CAPROVER_TOKEN }}"
+          image: "${{ steps.meta.outputs.tags }}"
+
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: "Deployed `sui-nft-spam-detect-api` image `${{ steps.meta.outputs.tags }}` commit `${{ github.event.head_commit.message }}`"

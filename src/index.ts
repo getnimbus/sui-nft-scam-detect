@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import { createTerminus } from "@godaddy/terminus";
 import { extractAndClassify } from "src/classify";
+import { validateSuiAddress } from "src/utils";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -67,7 +68,10 @@ app.get("/v1/nfts/classify", async (req, res) => {
   try {
     const address = req.query.address as string;
     if (!address) {
-      return res.status(400).json({ error: "address is required" });
+      return res.status(400).json({ error: "Address is required" });
+    }
+    if (!validateSuiAddress(address)) {
+      return res.status(400).json({ error: "Invalid Sui address" });
     }
 
     const result = await extractAndClassify(address);

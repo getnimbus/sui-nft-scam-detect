@@ -5,13 +5,18 @@ import {
   Card,
   CardMedia,
   CardContent,
-  CardActions,
-  Button,
 } from "@mui/material";
 import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useQueries,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useEffect } from "react";
+import { formatCurrency } from "../utils";
 
 const rpcUrl = getFullnodeUrl("mainnet");
 const suiClient = new SuiClient({
@@ -33,6 +38,17 @@ interface NFTDisplayProps {
   nftObject: string;
 }
 
+const handleClassificationIcon = (textInput: string) => {
+  const text = textInput.toLowerCase();
+  if (text === "verified") {
+    return "✅";
+  } else if (text === "scam" || text === "spam") {
+    return "❌";
+  } else {
+    return "☑️";
+  }
+};
+
 const fetchNFTInfo = async (id: string) => {
   try {
     // Replace with your actual API endpoint and fetching logic
@@ -52,6 +68,7 @@ const fetchNFTInfo = async (id: string) => {
           params: {
             address: id,
           },
+          // timeout: 2 * 60 * 1000,
         })
         .then((res) => res.data),
     ]);
@@ -71,7 +88,6 @@ const fetchNFTInfo = async (id: string) => {
       ham_likelihood: classification?.ham_likelihood,
       spam_likelihood: classification?.spam_likelihood,
     } as NFTInfo;
-
     return data;
   } catch (error) {
     console.error("Error fetching NFT info:", error);
@@ -79,27 +95,44 @@ const fetchNFTInfo = async (id: string) => {
 };
 
 const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
-  const { data, isLoading, isFetching, isError } = useQuery({
+  const queryClient = useQueryClient();
+  const { data, isLoading, isFetching, isError } = useQuery<any>({
     queryKey: ["nft-spam"],
     queryFn: () => fetchNFTInfo(nftObject),
+
+    // hardcode for testing
+    // queryFn: () =>
+    //   new Promise((resolve, reject) => {
+    //     resolve({
+    //       id: "0x2bb452d337fd9508b83df4a6e028362510102f9048daa351ffbd7ef7db6a6aa6",
+    //       name: "Sui Reward Pass",
+    //       type: "0xcbe21650685e7a83190e944674f4c37dcd0dd53b9cc01def0222abd3f7c2d343::sui_collection_w::SUI_COLLECTION",
+    //       description:
+    //         "You've been rewarded for your activity on Sui Network. Claim your reward at https://suihubs.com",
+    //       image_url: "https://suicamp.b-cdn.net/suihubcom/suihub_item.jpg",
+    //       classification: "spam",
+    //       ham_likelihood: 0.004465306355738455,
+    //       spam_likelihood: 0.005257129669189452,
+    //     });
+    //   }),
     enabled: nftObject ? true : false,
+    refetchOnWindowFocus: false,
   });
 
-  // useEffect(() => {
-  //   if (nftObject) {
-  //     console.log(nftObject);
-  //     fetchNFTInfo(nftObject);
-  //   }
-  // }, [nftObject]);
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["nft-spam"] });
+  }, [queryClient, nftObject]);
+
+  console.log(nftObject);
 
   const cardData = [
-    { label: "Object ID: ", item: data?.id },
-    { label: "Type: ", item: data?.type },
-    { label: "Name: ", item: data?.name },
-    { label: "Description: ", item: data?.description },
-    { label: "Classification: ", item: data?.classification },
-    { label: "Ham Likelihood: ", item: data?.ham_likelihood },
-    { label: "Spam Likelihood: ", item: data?.spam_likelihood },
+    { label: "Object ID:", item: data?.id },
+    { label: "Type:", item: data?.type },
+    { label: "Name:", item: data?.name },
+    { label: "Description:", item: data?.description },
+    { label: "Classification:", item: data?.classification },
+    { label: "Ham Likelihood:", item: data?.ham_likelihood },
+    { label: "Spam Likelihood:", item: data?.spam_likelihood },
   ];
 
   if (!nftObject) {
@@ -110,7 +143,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     );
   }
 
-  if (isLoading && isFetching) {
+  if (isLoading || isFetching) {
     return <CircularProgress />;
   }
 
@@ -122,10 +155,10 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     );
 
   return (
-    <Box mt={4}>
+    <Box mt={4} sx={{ maxWidth: "100%" }}>
       <Card sx={{ maxWidth: "100%" }}>
         <CardMedia
-          sx={{ height: 400 }}
+          sx={{ height: 500 }}
           image={
             data?.image_url.replace("ipfs://", "https://ipfs.io/ipfs/") ||
             "https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
@@ -135,39 +168,32 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
             width: "50%",
             objectFit: "contain",
             margin: "auto",
+            borderRadius: "4px",
           }}
         />
         <CardContent>
-          {cardData.map((item) => {
+          {cardData.map((item, index) => {
             return (
-              <Typography fontWeight={600}>
-                <span className="font-normal">{item.label}</span>{" "}
-                {item.item || "..."}
+              <Typography
+                key={index}
+                fontWeight={600}
+                color={item.label === "Classification: " ? "green" : ""}
+                className="flex"
+              >
+                <span className="font-normal text-black whitespace-pre flex w-[130px]">
+                  {item.label}
+                </span>{" "}
+                {(item.label === "Classification:"
+                  ? handleClassificationIcon(item.item) + ` (${item.item})`
+                  : item.label === "Ham Likelihood:" ||
+                    item.label === "Spam Likelihood:"
+                  ? formatCurrency(item.item)
+                  : item.item) || "..."}
               </Typography>
             );
           })}
         </CardContent>
       </Card>
-    </Box>
-  );
-
-  return (
-    <Box mt={4}>
-      <Typography variant="h6">NFT Info</Typography>
-      <img
-        src={
-          data?.image_url.replace("ipfs://", "https://ipfs.io/ipfs/") || "..."
-        }
-        alt={data?.name || "..."}
-        style={{ width: "50%" }}
-      />
-      <Typography>Object ID: {data?.id || "..."}</Typography>
-      <Typography>Type: {data?.type || "..."}</Typography>
-      <Typography>Name: {data?.name || "..."}</Typography>
-      <Typography>Description: {data?.description || "..."}</Typography>
-      <Typography>Classification: {data?.classification || "..."}</Typography>
-      <Typography>Ham Likelihood: {data?.ham_likelihood || "..."}</Typography>
-      <Typography>Spam Likelihood: {data?.spam_likelihood || "..."}</Typography>
     </Box>
   );
 };

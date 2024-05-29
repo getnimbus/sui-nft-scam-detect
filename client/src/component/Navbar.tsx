@@ -1,21 +1,20 @@
 import {
   AppBar,
   Box,
-  FormControlLabel,
-  FormGroup,
   IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  Menu,
-  MenuItem,
-  Switch,
   Toolbar,
   Typography,
 } from "@mui/material";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
-const navItems = ["Home", "About", "Github"];
+const navItems = [
+  { title: "About", href: "https://getnimbus.io" },
+  { title: "Github", href: "https://github.com/getnimbus" },
+];
 
 export const FNavbar = () => {
   return (
@@ -31,14 +30,18 @@ export const FNavbar = () => {
           >
             {/* <MenuIcon /> */}
           </IconButton>
+
           <Typography variant="h5" component="h1" sx={{ flexGrow: 1 }}>
-            Sui NFT Spam Detecter
+            Sui NFT Spam Detector
           </Typography>
           <List className="flex gap-4 items-center">
             {navItems.map((item) => (
-              <ListItem key={item} disablePadding>
+              <ListItem key={item.title} disablePadding>
+                <ListItemText>{item.title}</ListItemText>
                 <ListItemButton sx={{ textAlign: "center" }}>
-                  <ListItemText primary={item} />
+                  <a href={item.href} target="_blank">
+                    <FaExternalLinkAlt color="#fff" />
+                  </a>
                 </ListItemButton>
               </ListItem>
             ))}

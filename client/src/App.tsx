@@ -15,7 +15,13 @@ const App: React.FC = () => {
 
   return (
     <Container maxWidth="xl">
-      <Box display="flex" flexDirection="column" alignItems="center" gap={4}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap={4}
+        maxWidth="xl"
+      >
         <UserInput onInputChange={handleInputChange} />
         <NFTDisplay nftObject={nftObject} />
       </Box>

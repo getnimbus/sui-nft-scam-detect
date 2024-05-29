@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { TextField, Button, Box, CardMedia } from "@mui/material";
+import { TextField, Button, Box } from "@mui/material";
 
 interface UserInputProps {
   onInputChange: (input: string) => void;

@@ -78,13 +78,13 @@ const fetchNFTInfo = async (id: string) => {
     if (checkIsIpfs === "ipfs://") {
       // https://sui-nft-spam-api.getnimbus.io
       // http://localhost:3000
-      image_url = `http://localhost:3000/cloudflare-img/${nftData?.display?.data?.image_url.replace(
+      image_url = `https://sui-nft-spam-api.getnimbus.io/cloudflare-img/${nftData?.display?.data?.image_url.replace(
         "ipfs://",
         ""
       )}`;
     } else {
       image_url =
-        "http://localhost:3000/read-image?link=" +
+        "https://sui-nft-spam-api.getnimbus.io/read-image?link=" +
         nftData?.display?.data?.image_url;
     }
 

@@ -1,7 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { TextField, Button, Box } from "@mui/material";
 import ExampleID from "./ExampleID";
-import { extractAndClassify } from "../utils/classify";
 import { toast } from "react-toastify";
 
 interface UserInputProps {

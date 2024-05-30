@@ -47,7 +47,6 @@ const handleClassificationIcon = (textInput: string) => {
 const fetchNFTInfo = async (id: string) => {
   try {
     // Replace with your actual API endpoint and fetching logic
-    console.log("it running ~!!!");
     const [nftData, classification] = await Promise.all([
       suiClient
         .getObject({
@@ -66,8 +65,6 @@ const fetchNFTInfo = async (id: string) => {
       toast.error("Not found NFT object data");
     }
 
-    console.log("hello world: ", { nftData, classification });
-
     const data = {
       id: nftData?.objectId,
       name: nftData?.display?.data?.name,
@@ -80,6 +77,7 @@ const fetchNFTInfo = async (id: string) => {
       ham_likelihood: classification?.ham_likelihood || "--",
       spam_likelihood: classification?.spam_likelihood || "--",
     } as NFTInfo;
+
     return data;
   } catch (error) {
     console.error("Error fetching NFT info:", error);
@@ -92,7 +90,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     queryKey: ["nft-spam"],
     queryFn: () => fetchNFTInfo(nftObject),
 
-    // hardcode for testing
+    // hardcode for testing please don't delete it
     // queryFn: () =>
     //   new Promise((resolve, reject) => {
     //     resolve({
@@ -163,7 +161,6 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
   }
 
   if (isError) {
-    console.log("isError: ", isError);
     return (
       <Box mt={4} sx={{ maxWidth: "100%" }}>
         <Card sx={{ maxWidth: "100%" }}>
@@ -186,20 +183,6 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
   return (
     <Box mt={4} sx={{ maxWidth: "100%" }}>
       <Card sx={{ maxWidth: "100%" }} className="xl:w-full">
-        {/* <CardMedia
-          sx={{ height: 500 }}
-          image={
-            data?.image_url?.replace("ipfs://", "https://ipfs.io/ipfs/") ||
-            "https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
-          }
-          title={data?.name || "..."}
-          style={{
-            width: "50%",
-            objectFit: "contain",
-            margin: "auto",
-            borderRadius: "4px",
-          }}
-        /> */}
         <CheckCardMediaImage
           imgName=""
           src={data?.image_url?.replace("ipfs://", "https://ipfs.io/ipfs/")}

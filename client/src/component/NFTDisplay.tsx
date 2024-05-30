@@ -70,13 +70,13 @@ const fetchNFTInfo = async (id: string) => {
       name: nftData?.display?.data?.name,
       type: nftData?.type,
       description: nftData?.display?.data?.description,
-      image_url:
-        nftData?.display?.data?.image_url ||
-        "https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg",
+      image_url: nftData?.display?.data?.image_url,
       classification: classification?.classification || "image_error",
       ham_likelihood: classification?.ham_likelihood || "--",
       spam_likelihood: classification?.spam_likelihood || "--",
     } as NFTInfo;
+
+    console.log("object : ", nftData?.display?.data?.image_url);
 
     return data;
   } catch (error) {
@@ -179,6 +179,8 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
       </Box>
     );
   }
+
+  // https://suivision.mypinata.cloud/ipfs/QmXHkTFM8xhw…&img-onerror=redirect&img-fit=pad&img-format=webp
 
   return (
     <Box mt={4} sx={{ maxWidth: "100%" }}>

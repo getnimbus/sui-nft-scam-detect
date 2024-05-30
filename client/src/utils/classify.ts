@@ -65,7 +65,8 @@ export const extractTokens = async (address: string): Promise<string[]> => {
       ) ?? "";
   } else {
     image_url =
-      "http://localhost:3000/read-image?link=" + nft?.display?.data?.image_url;
+      "https://sui-nft-spam-api.getnimbus.io/read-image?link=" +
+      nft?.display?.data?.image_url;
   }
   let imageData = await getImageData(image_url ?? "");
 

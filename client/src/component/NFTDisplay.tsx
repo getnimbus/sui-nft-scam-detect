@@ -76,7 +76,7 @@ const fetchNFTInfo = async (id: string) => {
       .join("");
     let image_url;
     if (checkIsIpfs === "ipfs://") {
-      image_url = `http://localhost:3000/cloudflare-img/${nftData?.display?.data?.image_url.replace(
+      image_url = `https://sui-nft-spam-api.getnimbus.io/cloudflare-img/${nftData?.display?.data?.image_url.replace(
         "ipfs://",
         ""
       )}`;

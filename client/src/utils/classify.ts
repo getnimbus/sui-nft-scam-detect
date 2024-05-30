@@ -50,12 +50,25 @@ export const extractTokens = async (address: string): Promise<string[]> => {
 
   // allow for tree data caching
   let imageWords, imageContainsUrl;
-  let imageData = await getImageData(
-    nft?.display?.data?.image_url?.replace(
-      "ipfs://",
-      "https://cloudflare-ipfs.com/ipfs/"
-    ) ?? ""
-  );
+  const checkIsIpfs = nft?.display?.data?.image_url
+    .split("")
+    .slice(0, "ipfs://".length)
+    .join("");
+  let image_url;
+  if (checkIsIpfs === "ipfs://") {
+    // https://sui-nft-spam-api.getnimbus.io
+    // http://localhost:3000
+    image_url =
+      nft?.display?.data?.image_url.replace(
+        "ipfs://",
+        "https://cloudflare-ipfs.com/ipfs/"
+      ) ?? "";
+  } else {
+    image_url =
+      "http://localhost:3000/read-image?link=" + nft?.display?.data?.image_url;
+  }
+  let imageData = await getImageData(image_url ?? "");
+
   imageWords = imageData.imageWords;
   imageContainsUrl = imageData.imageContainsUrl;
 

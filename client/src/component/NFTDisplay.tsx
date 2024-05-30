@@ -76,17 +76,17 @@ const fetchNFTInfo = async (id: string) => {
       .join("");
     let image_url;
     if (checkIsIpfs === "ipfs://") {
-      image_url = `https://sui-nft-spam-api.getnimbus.io/cloudflare-img/${nftData?.display?.data?.image_url.replace(
+      // https://sui-nft-spam-api.getnimbus.io
+      // http://localhost:3000
+      image_url = `http://localhost:3000/cloudflare-img/${nftData?.display?.data?.image_url.replace(
         "ipfs://",
         ""
       )}`;
-
-      // .then((res) => res.data);
     } else {
-      image_url = nftData?.display?.data?.image_url;
+      image_url =
+        "http://localhost:3000/read-image?link=" +
+        nftData?.display?.data?.image_url;
     }
-
-    console.log("image_url: >>>>", image_url);
 
     const data = {
       id: nftData?.objectId,
@@ -133,8 +133,6 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["nft-spam"] });
   }, [nftObject]);
-
-  console.log({ isLoading, isFetching, data });
 
   const cardData = [
     { label: "Object ID", desc: data?.id },

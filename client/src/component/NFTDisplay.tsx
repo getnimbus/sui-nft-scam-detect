@@ -65,10 +65,6 @@ const fetchNFTInfo = async (id: string) => {
     if (!nftData) {
       toast.error("Not found NFT object data");
     }
-    console.log(
-      "nftData?.display?.data?.image_url: ",
-      nftData?.display?.data?.image_url
-    );
 
     const checkIsIpfs = nftData?.display?.data?.image_url
       .split("")

@@ -1,0 +1,36 @@
+{
+    "spam": {
+      "tokens": {
+        "imageExists": 6,
+        "not_containsEmoji": 6,
+        "not_imageContainsUrl": 4,
+        "scamCollection": 2,
+        "been'rt": 2,
+        "rewarded": 2,
+        "SUI": 2,
+        "not_listingMarketplace": 4,
+        "not_scamCollection": 4,
+        "scallopfi.com": 2,
+        "$5000": 2,
+        "scallop": 2,
+        "incentive": 2,
+        "imageContainsUrl": 2
+      },
+      "size": 6
+    },
+    "ham": {
+      "tokens": {
+        "imageExists": 4,
+        "not_containsEmoji": 4,
+        "not_imageContainsUrl": 4,
+        "listingMarketplace": 4,
+        "not_scamCollection": 4,
+        "collectionExists": 4,
+        "suilend": 2,
+        "beta": 2,
+        "pass": 2,
+        "s2/14/2%": 2
+      },
+      "size": 4
+    }
+  }

@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { formatCurrency } from "../utils";
 import { extractAndClassify } from "../utils/classify";
 import CheckCardMediaImage from "./CheckCardMediaImage";
+import axios from "axios";
 
 const rpcUrl = getFullnodeUrl("mainnet");
 const suiClient = new SuiClient({
@@ -64,13 +65,35 @@ const fetchNFTInfo = async (id: string) => {
     if (!nftData) {
       toast.error("Not found NFT object data");
     }
+    console.log(
+      "nftData?.display?.data?.image_url: ",
+      nftData?.display?.data?.image_url
+    );
+
+    const checkIsIpfs = nftData?.display?.data?.image_url
+      .split("")
+      .slice(0, "ipfs://".length)
+      .join("");
+    let image_url;
+    if (checkIsIpfs === "ipfs://") {
+      image_url = `http://localhost:3000/cloudflare-img/${nftData?.display?.data?.image_url.replace(
+        "ipfs://",
+        ""
+      )}`;
+
+      // .then((res) => res.data);
+    } else {
+      image_url = nftData?.display?.data?.image_url;
+    }
+
+    console.log("image_url: >>>>", image_url);
 
     const data = {
       id: nftData?.objectId,
       name: nftData?.display?.data?.name,
       type: nftData?.type,
       description: nftData?.display?.data?.description,
-      image_url: nftData?.display?.data?.image_url,
+      image_url,
       classification: classification?.classification || "image_error",
       ham_likelihood: classification?.ham_likelihood || "--",
       spam_likelihood: classification?.spam_likelihood || "--",
@@ -186,10 +209,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
       <Card sx={{ maxWidth: "100%" }} className="xl:w-full">
         <CheckCardMediaImage
           imgName=""
-          src={data?.image_url?.replace(
-            "ipfs://",
-            "https://cloudflare-ipfs.com/ipfs/"
-          )}
+          src={data?.image_url}
           defaultImg="/image-not-found.png"
           className="md:h-[500px] mx-auto rounded-xl"
         />

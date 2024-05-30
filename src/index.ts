@@ -8,6 +8,7 @@ import morgan from "morgan";
 import { createTerminus } from "@godaddy/terminus";
 import { extractAndClassify } from "src/classify";
 import { validateSuiAddress } from "src/utils";
+import axios, { AxiosResponse } from "axios";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -81,6 +82,54 @@ app.get("/v1/nfts/classify", async (req, res) => {
     return res.status(500).json({ error: error?.message || error });
   }
 });
+
+app.get("/cloudflare-img/:id", async (req, res) => {
+  try {
+    const nftId = req.params.id as string;
+    if (!nftId) {
+      return res.status(400).json({ error: "Address is required" });
+    }
+
+    const asset: AxiosResponse<any> = await axios.get(
+      `https://suivision.mypinata.cloud/ipfs/${nftId}?pinataGatewayToken=XRz-H79S4Su_2PfKu9Ka-W7djbN8b0emIpVtsLxkbnebfobn-IIl-y6Elzyza7p-&img-fit=cover&img-quality=80&img-onerror=redirect&img-fit=pad&img-format=webp`,
+      { responseType: "arraybuffer" }
+    );
+
+    var img = Buffer.from(asset.data, "base64");
+
+    res.writeHead(200, {
+      "Content-Type": "image/png",
+      "Content-Length": img.length,
+    });
+    res.end(img);
+
+    return res;
+  } catch (error) {
+    console.log("err: ", error);
+    res.status(500).json({ error: "ipfs got error" });
+  }
+});
+
+// app.post("/read-image/:link", async (req, res) => {
+//   try {
+//     const link = req.params.link;
+
+//     const asset: AxiosResponse<any> = await axios.get(link, {
+//       responseType: "arraybuffer",
+//     });
+//     var img = Buffer.from(asset.data, "base64");
+
+//     res.writeHead(200, {
+//       "Content-Type": "image/png",
+//       "Content-Length": img.length,
+//     });
+//     res.end(img);
+
+//     return res;
+//   } catch (error) {
+//     console.log("error: ", error);
+//   }
+// });
 
 function onHealthCheck() {
   return Promise.resolve();

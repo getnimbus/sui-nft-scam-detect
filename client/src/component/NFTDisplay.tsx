@@ -166,7 +166,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
         <Card sx={{ maxWidth: "100%" }}>
           <CheckCardMediaImage
             imgName=""
-            src="https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
+            src="/image-not-found.png"
             defaultImg=""
             className="md:h-[500px] mx-auto rounded-xl"
           />
@@ -189,7 +189,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
             "ipfs://",
             "https://cloudflare-ipfs.com/ipfs/"
           )}
-          defaultImg="https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
+          defaultImg="/image-not-found.png"
           className="md:h-[500px] mx-auto rounded-xl"
         />
         <CardContent className="w-full overflow-x-auto">

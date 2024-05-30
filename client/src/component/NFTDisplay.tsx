@@ -200,7 +200,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
                 key={index}
                 fontWeight={600}
                 className={`flex w-full whitespace-nowrap pr-2 ${
-                  item.label === "Classification:"
+                  item.label === "Classification"
                     ? item.desc === "verified"
                       ? "text-green-500"
                       : item.desc === "scam" || item.desc === "spam"
@@ -214,10 +214,10 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
                 <span className="font-normal text-black whitespace-pre flex w-[130px] mr-2">
                   {item.label}
                 </span>{" "}
-                {(item.label === "Classification:"
+                {(item.label === "Classification"
                   ? handleClassificationIcon(item.desc) + ` (${item.desc})`
-                  : item.label === "Ham Likelihood:" ||
-                    item.label === "Spam Likelihood:"
+                  : item.label === "Ham Likelihood" ||
+                    item.label === "Spam Likelihood"
                   ? formatCurrency(item.desc)
                   : item.desc) || "..."}
               </Typography>

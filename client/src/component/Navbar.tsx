@@ -20,16 +20,6 @@ export const FNavbar = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            {/* <MenuIcon /> */}
-          </IconButton>
-
           <Typography variant="h5" component="h1" sx={{ flexGrow: 1 }}>
             Sui NFT Spam Detector
           </Typography>

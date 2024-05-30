@@ -12,8 +12,8 @@ import {
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 const navItems = [
-  { title: "About", href: "https://getnimbus.io" },
-  { title: "Github", href: "https://github.com/getnimbus" },
+  { title: "About", href: "", internal: true },
+  { title: "Github", href: "https://github.com/getnimbus", internal: false },
 ];
 
 export const FNavbar = () => {
@@ -40,7 +40,7 @@ export const FNavbar = () => {
                 <ListItemText>{item.title}</ListItemText>
                 <ListItemButton sx={{ textAlign: "center" }}>
                   <a href={item.href} target="_blank">
-                    <FaExternalLinkAlt color="#fff" />
+                    {!item.internal && <FaExternalLinkAlt color="#fff" />}
                   </a>
                 </ListItemButton>
               </ListItem>

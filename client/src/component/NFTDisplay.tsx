@@ -1,22 +1,11 @@
-import {
-  Box,
-  Typography,
-  CircularProgress,
-  Card,
-  CardMedia,
-  CardContent,
-} from "@mui/material";
+import { Box, Typography, Card, CardContent, Skeleton } from "@mui/material";
 import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
 import { toast } from "react-toastify";
-import axios from "axios";
-import {
-  QueryClient,
-  useQueries,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { formatCurrency } from "../utils";
+import { extractAndClassify } from "../utils/classify";
+import CheckCardMediaImage from "./CheckCardMediaImage";
 
 const rpcUrl = getFullnodeUrl("mainnet");
 const suiClient = new SuiClient({
@@ -38,12 +27,18 @@ interface NFTDisplayProps {
   nftObject: string;
 }
 
+const responsiveSize = () => {
+  return window?.innerWidth > 760 ? 500 : window.innerWidth > 420 ? 400 : 300;
+};
+
 const handleClassificationIcon = (textInput: string) => {
   const text = textInput.toLowerCase();
   if (text === "verified") {
     return "✅";
   } else if (text === "scam" || text === "spam") {
     return "❌";
+  } else if (text === "image_error") {
+    return "The result may be incorrect due to issues reading the NFT image.";
   } else {
     return "☑️";
   }
@@ -52,6 +47,7 @@ const handleClassificationIcon = (textInput: string) => {
 const fetchNFTInfo = async (id: string) => {
   try {
     // Replace with your actual API endpoint and fetching logic
+    console.log("it running ~!!!");
     const [nftData, classification] = await Promise.all([
       suiClient
         .getObject({
@@ -63,30 +59,26 @@ const fetchNFTInfo = async (id: string) => {
           },
         })
         .then((res) => res.data),
-      axios
-        .get("https://sui-nft-spam-api.getnimbus.io/v1/nfts/classify", {
-          params: {
-            address: id,
-          },
-          // timeout: 2 * 60 * 1000,
-        })
-        .then((res) => res.data),
+      extractAndClassify(id),
     ]);
+
     if (!nftData) {
       toast.error("Not found NFT object data");
     }
 
-    console.log(classification);
+    console.log("hello world: ", { nftData, classification });
 
     const data = {
       id: nftData?.objectId,
       name: nftData?.display?.data?.name,
       type: nftData?.type,
       description: nftData?.display?.data?.description,
-      image_url: nftData?.display?.data?.image_url,
-      classification: classification?.classification,
-      ham_likelihood: classification?.ham_likelihood,
-      spam_likelihood: classification?.spam_likelihood,
+      image_url:
+        nftData?.display?.data?.image_url ||
+        "https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg",
+      classification: classification?.classification || "image_error",
+      ham_likelihood: classification?.ham_likelihood || "--",
+      spam_likelihood: classification?.spam_likelihood || "--",
     } as NFTInfo;
     return data;
   } catch (error) {
@@ -110,7 +102,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     //       description:
     //         "You've been rewarded for your activity on Sui Network. Claim your reward at https://suihubs.com",
     //       image_url: "https://suicamp.b-cdn.net/suihubcom/suihub_item.jpg",
-    //       classification: "spam",
+    //       classification: "scam",
     //       ham_likelihood: 0.004465306355738455,
     //       spam_likelihood: 0.005257129669189452,
     //     });
@@ -121,46 +113,83 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: ["nft-spam"] });
-  }, [queryClient, nftObject]);
+  }, [nftObject]);
 
-  console.log(nftObject);
+  console.log({ isLoading, isFetching, data });
 
   const cardData = [
-    { label: "Object ID:", item: data?.id },
-    { label: "Type:", item: data?.type },
-    { label: "Name:", item: data?.name },
-    { label: "Description:", item: data?.description },
-    { label: "Classification:", item: data?.classification },
-    { label: "Ham Likelihood:", item: data?.ham_likelihood },
-    { label: "Spam Likelihood:", item: data?.spam_likelihood },
+    { label: "Object ID:", desc: data?.id },
+    { label: "Type:", desc: data?.type },
+    { label: "Name:", desc: data?.name },
+    { label: "Description:", desc: data?.description },
+    { label: "Classification:", desc: data?.classification },
+    { label: "Ham Likelihood:", desc: data?.ham_likelihood },
+    { label: "Spam Likelihood:", desc: data?.spam_likelihood },
   ];
 
   if (!nftObject) {
-    return (
-      <Typography className="text-red-400">
-        Please enter an NFT object to see the information.
-      </Typography>
-    );
+    return <></>;
   }
 
   if (isLoading || isFetching) {
-    return <CircularProgress />;
+    return (
+      <Box mt={4} sx={{ maxWidth: "100%" }}>
+        <Card sx={{ maxWidth: "100%" }}>
+          <Skeleton
+            height={responsiveSize()}
+            width={responsiveSize()}
+            variant="rounded"
+            className="mx-auto"
+          />
+          <CardContent className="w-full overflow-hidden">
+            {cardData.map((item, index) => {
+              return (
+                <Typography key={index} className="flex">
+                  <span className="whitespace-pre flex w-[130px] mr-2">
+                    {item.label}
+                  </span>{" "}
+                  <Skeleton
+                    variant="text"
+                    sx={{ fontSize: "1rem" }}
+                    className="w-[1000px] overflow-hidden"
+                  />
+                </Typography>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </Box>
+    );
   }
 
-  if (isError)
+  if (isError) {
+    console.log("isError: ", isError);
     return (
-      <Typography className="text-red-400">
-        Some thing wrong when fetching api ser!!!
-      </Typography>
+      <Box mt={4} sx={{ maxWidth: "100%" }}>
+        <Card sx={{ maxWidth: "100%" }}>
+          <CheckCardMediaImage
+            imgName=""
+            src="https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
+            defaultImg=""
+            className="md:h-[500px] mx-auto rounded-xl"
+          />
+          <CardContent className="w-full overflow-hidden">
+            <Typography color="red" fontWeight={500}>
+              Error: NFT image IPFS loading failed. Please try again later.
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
     );
+  }
 
   return (
     <Box mt={4} sx={{ maxWidth: "100%" }}>
-      <Card sx={{ maxWidth: "100%" }}>
-        <CardMedia
+      <Card sx={{ maxWidth: "100%" }} className="xl:w-full">
+        {/* <CardMedia
           sx={{ height: 500 }}
           image={
-            data?.image_url.replace("ipfs://", "https://ipfs.io/ipfs/") ||
+            data?.image_url?.replace("ipfs://", "https://ipfs.io/ipfs/") ||
             "https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
           }
           title={data?.name || "..."}
@@ -170,25 +199,40 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
             margin: "auto",
             borderRadius: "4px",
           }}
+        /> */}
+        <CheckCardMediaImage
+          imgName=""
+          src={data?.image_url?.replace("ipfs://", "https://ipfs.io/ipfs/")}
+          defaultImg="https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
+          className="md:h-[500px] mx-auto rounded-xl"
         />
-        <CardContent>
+        <CardContent className="w-full overflow-x-auto">
           {cardData.map((item, index) => {
             return (
               <Typography
                 key={index}
                 fontWeight={600}
-                color={item.label === "Classification: " ? "green" : ""}
-                className="flex"
+                className={`flex w-full whitespace-nowrap pr-2 ${
+                  item.label === "Classification:"
+                    ? item.desc === "verified"
+                      ? "text-green-500"
+                      : item.desc === "scam" || item.desc === "spam"
+                      ? "text-red-500"
+                      : item.desc === "image_error"
+                      ? "text-gray-500"
+                      : ""
+                    : ""
+                }`}
               >
-                <span className="font-normal text-black whitespace-pre flex w-[130px]">
+                <span className="font-normal text-black whitespace-pre flex w-[130px] mr-2">
                   {item.label}
                 </span>{" "}
                 {(item.label === "Classification:"
-                  ? handleClassificationIcon(item.item) + ` (${item.item})`
+                  ? handleClassificationIcon(item.desc) + ` (${item.desc})`
                   : item.label === "Ham Likelihood:" ||
                     item.label === "Spam Likelihood:"
-                  ? formatCurrency(item.item)
-                  : item.item) || "..."}
+                  ? formatCurrency(item.desc)
+                  : item.desc) || "..."}
               </Typography>
             );
           })}

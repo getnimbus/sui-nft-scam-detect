@@ -12,7 +12,6 @@ import {
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 const navItems = [
-  { title: "About", href: "", internal: true },
   { title: "Github", href: "https://github.com/getnimbus", internal: false },
 ];
 

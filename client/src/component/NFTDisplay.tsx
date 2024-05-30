@@ -114,16 +114,16 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
   console.log({ isLoading, isFetching, data });
 
   const cardData = [
-    { label: "Object ID:", desc: data?.id },
-    { label: "Type:", desc: data?.type },
-    { label: "Name:", desc: data?.name },
-    { label: "Description:", desc: data?.description },
+    { label: "Object ID", desc: data?.id },
+    { label: "Type", desc: data?.type },
+    { label: "Name", desc: data?.name },
+    { label: "Description", desc: data?.description },
     {
-      label: "Classification:",
+      label: "Classification",
       desc: data?.classification === "spam" ? "scam" : data?.classification,
     },
-    { label: "Ham Likelihood:", desc: data?.ham_likelihood },
-    { label: "Spam Likelihood:", desc: data?.spam_likelihood },
+    { label: "Ham Likelihood", desc: data?.ham_likelihood },
+    { label: "Spam Likelihood", desc: data?.spam_likelihood },
   ];
 
   if (!nftObject) {

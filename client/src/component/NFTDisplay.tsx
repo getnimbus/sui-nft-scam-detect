@@ -180,14 +180,15 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     );
   }
 
-  // https://suivision.mypinata.cloud/ipfs/QmXHkTFM8xhw…&img-onerror=redirect&img-fit=pad&img-format=webp
-
   return (
     <Box mt={4} sx={{ maxWidth: "100%" }}>
       <Card sx={{ maxWidth: "100%" }} className="xl:w-full">
         <CheckCardMediaImage
           imgName=""
-          src={data?.image_url?.replace("ipfs://", "https://ipfs.io/ipfs/")}
+          src={data?.image_url?.replace(
+            "ipfs://",
+            "https://cloudflare-ipfs.com/ipfs/"
+          )}
           defaultImg="https://www.shutterstock.com/image-vector/ui-image-placeholder-wireframes-apps-600w-1037719204.jpg"
           className="md:h-[500px] mx-auto rounded-xl"
         />

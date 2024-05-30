@@ -18,7 +18,8 @@ const listTestId = [
   {
     label: "Example Verified Address:",
     listItems: [
-      // "0xc7c29e000a6b7e089ab59aecf38a86d5bd0cd2ed3c55ccec7b97debe717bd70a", // ipfs error
+      "0xc7c29e000a6b7e089ab59aecf38a86d5bd0cd2ed3c55ccec7b97debe717bd70a",
+      "0x3b7d9c1e015e4cad17814e0f77dda1a584e91714213497ea88547da26611bd8b",
       "0xf46245a6ac47fec46fe89665e8590aaf1193e1f399b84bb3247bcda7e247fe11",
       "0x26e046ab456e8d9f1e6b732d3e2273aa2e89826d4a33fcdd1f4adb5f62dbf887",
     ],

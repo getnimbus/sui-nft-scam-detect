@@ -53,7 +53,7 @@ export const extractTokens = async (address: string): Promise<string[]> => {
   let imageData = await getImageData(
     nft?.display?.data?.image_url?.replace(
       "ipfs://",
-      "https://ipfs.io/ipfs/"
+      "https://cloudflare-ipfs.com/ipfs/"
     ) ?? ""
   );
   imageWords = imageData.imageWords;

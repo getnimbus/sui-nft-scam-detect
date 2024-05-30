@@ -9,14 +9,14 @@ interface UserInputProps {
 
 const listTestId = [
   {
-    label: "Example Spam Address:",
+    label: "Example Scam NFT:",
     listItems: [
       "0x2bb452d337fd9508b83df4a6e028362510102f9048daa351ffbd7ef7db6a6aa6",
       "0x001d09bd0d937084c7132be58fb0b65aa44c2dafeb4df94b711905461c3e0bce",
     ],
   },
   {
-    label: "Example Verified Address:",
+    label: "Example Verified NFT:",
     listItems: [
       "0xc7c29e000a6b7e089ab59aecf38a86d5bd0cd2ed3c55ccec7b97debe717bd70a",
       "0x3b7d9c1e015e4cad17814e0f77dda1a584e91714213497ea88547da26611bd8b",

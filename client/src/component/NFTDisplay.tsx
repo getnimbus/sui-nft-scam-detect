@@ -76,8 +76,6 @@ const fetchNFTInfo = async (id: string) => {
       spam_likelihood: classification?.spam_likelihood || "--",
     } as NFTInfo;
 
-    console.log("object : ", nftData?.display?.data?.image_url);
-
     return data;
   } catch (error) {
     console.error("Error fetching NFT info:", error);
@@ -120,7 +118,10 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     { label: "Type:", desc: data?.type },
     { label: "Name:", desc: data?.name },
     { label: "Description:", desc: data?.description },
-    { label: "Classification:", desc: data?.classification },
+    {
+      label: "Classification:",
+      desc: data?.classification === "spam" ? "scam" : data?.classification,
+    },
     { label: "Ham Likelihood:", desc: data?.ham_likelihood },
     { label: "Spam Likelihood:", desc: data?.spam_likelihood },
   ];

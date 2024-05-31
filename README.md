@@ -1,4 +1,4 @@
-# SUI NFT scam Detector
+# SUI NFT Scam Detector
 
 A lightweight detector scam classifier for NFTs on Sui with 95% accuracy. Can run anywhere that webassembly runs: on a server, in a lambda function, and even running entirely in your browser.
 
@@ -31,7 +31,7 @@ yarn start
 
 Live testing at: https://sui-nft-spam-fe.getnimbus.io/
 
-You can test the accuracy of a model using the code in the /test folder. Make sure that your training set and test set do not overlap. It should spit out a confusion matrix as well as all of the mistakes made with accuracy more than 95%
+You can test the accuracy of a model using the code in the `/test` folder. Make sure that your training set and test set do not overlap. It should spit out a confusion matrix as well as all of the mistakes made with accuracy more than 95%
 
 |                | scam (predicted) | ham (predicted) |
 |----------------|------------------|-----------------|

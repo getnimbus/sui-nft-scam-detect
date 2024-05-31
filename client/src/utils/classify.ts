@@ -18,9 +18,13 @@ const getImageData = async (imageUrl: string) => {
     });
     const ret = await worker.recognize(imageUrl);
     const imageWords = ret.data.text.split(/\s+/);
-    const imageContainsUrl = imageWords.some((word) =>
-      word.match(/^[\S]+[.][\S]/)
-    );
+    const imageContainsUrl = imageWords.some((word) => {
+      const checkRemovedWord = word
+        .split("")
+        .filter((item) => item !== "&")
+        .join("");
+      return checkRemovedWord.match(/^[\S]+[.][\S]/);
+    });
     worker.terminate();
 
     return { imageWords, imageContainsUrl };

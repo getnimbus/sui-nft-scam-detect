@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "run-p build:watch start:watch",
     "train": "yarn build && yarn start:train",
+    "eval": "yarn build && dotenv -- node dist/test/eval.js",
     "build": "swc src -d dist --copy-files",
     "build:watch": "swc src -d dist --copy-files --watch",
     "start": "dotenv -- node dist/index.js",

@@ -2,7 +2,6 @@ import axios from "axios";
 import { createWorker } from "tesseract.js";
 import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
 import defaultModel from "@resources/model.json";
-import { difference } from "lodash";
 
 const rpcUrl = getFullnodeUrl("mainnet");
 const suiClient = new SuiClient({
@@ -13,17 +12,22 @@ const suiClient = new SuiClient({
 // very slow, not recommended for production
 // should roll your own OCR
 const getImageData = async (imageUrl: string) => {
-  const worker = await createWorker("eng", 1, {
-    cachePath: "/tmp",
-  });
-  const ret = await worker.recognize(imageUrl);
-  const imageWords = ret.data.text.split(/\s+/);
-  const imageContainsUrl = imageWords.some((word) =>
-    word.match(/^[\S]+[.][\S]/)
-  );
-  worker.terminate();
+  try {
+    const worker = await createWorker("eng", 1, {
+      cachePath: "/tmp",
+    });
+    const ret = await worker.recognize(imageUrl);
+    const imageWords = ret.data.text.split(/\s+/);
+    const imageContainsUrl = imageWords.some((word) =>
+      word.match(/^[\S]+[.][\S]/)
+    );
+    worker.terminate();
 
-  return { imageWords, imageContainsUrl };
+    return { imageWords, imageContainsUrl };
+  } catch (err) {
+    console.log(err);
+    return { imageWords: [], imageContainsUrl: false };
+  }
 };
 
 export const extractTokens = async (address: string): Promise<string[]> => {
@@ -113,67 +117,42 @@ export const extractTokens = async (address: string): Promise<string[]> => {
   return tokens;
 };
 
-const spamNftTokens = [
+const scamNftTokens = [
+  "scamCollection",
   "not_imageExists",
   "containsEmoji",
   "imageContainsUrl",
   "not_collectionExists",
 ];
 
-const verifiedNftTokens = [
-  "imageExists",
-  "not_containsEmoji",
-  "not_imageContainsUrl",
-  "listingMarketplace",
-  "not_scamCollection",
-  "collectionExists",
-];
-
 export const classify = (tokens: string[], model: any = defaultModel) => {
-  // all verfiedNftTokens are into this NFT tokens
-  if (difference(verifiedNftTokens, tokens).length === 0) {
-    return {
-      classification: "verified",
-      spam_likelihood: 0,
-      ham_likelihood: 0,
-    };
-  }
-
-  if (tokens.includes("scamCollection")) {
-    return {
-      classification: "scam",
-      spam_likelihood: 0,
-      ham_likelihood: 0,
-    };
-  }
-
-  for (const spamToken of spamNftTokens) {
-    if (tokens.includes(spamToken)) {
+  for (const scamToken of scamNftTokens) {
+    if (tokens.includes(scamToken)) {
       return {
-        classification: "spam",
-        spam_likelihood: 1,
+        classification: "scam",
+        scam_likelihood: 1,
         ham_likelihood: 0,
       };
     }
   }
 
-  let spam_likelihood = model.spam.size / (model.spam.size + model.ham.size);
-  let ham_likelihood = 1 - spam_likelihood;
+  let scam_likelihood = model.scam.size / (model.scam.size + model.ham.size);
+  let ham_likelihood = 1 - scam_likelihood;
   const unique_tokens = new Set(tokens);
 
   unique_tokens.forEach((token) => {
-    const spam_token_likelihood =
-      ((model.spam.tokens[token] || 0) + 1) / (model.spam.size + 2);
+    const scam_token_likelihood =
+      ((model.scam.tokens[token] || 0) + 1) / (model.scam.size + 2);
     const ham_token_likelihood =
       ((model.ham.tokens[token] || 0) + 1) / (model.ham.size + 2);
 
-    spam_likelihood *= spam_token_likelihood;
+    scam_likelihood *= scam_token_likelihood;
     ham_likelihood *= ham_token_likelihood;
   });
 
   return {
-    classification: spam_likelihood > ham_likelihood ? "spam" : "ham",
-    spam_likelihood,
+    classification: scam_likelihood > ham_likelihood ? "scam" : "ham",
+    scam_likelihood,
     ham_likelihood,
   };
 };

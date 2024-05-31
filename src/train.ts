@@ -2,11 +2,11 @@ require("dotenv").config();
 import * as fs from "fs";
 import * as path from "path";
 import { extractTokens } from "src/classify";
-import spam_ids from "@resources/spam_ids.json";
+import scam_ids from "@resources/scam_ids.json";
 import ham_ids from "@resources/ham_ids.json";
 
 let model: any = {
-  spam: {
+  scam: {
     tokens: {},
     size: 0,
   },
@@ -28,13 +28,13 @@ const train = (category: string, tokens: string[]) => {
   });
 };
 
-// download and train the classifier on the spam and ham categories
+// download and train the classifier on the scam and ham categories
 const downloadAndTrain = async () => {
-  for (let i = 0; i < spam_ids.length; i++) {
-    const id = spam_ids[i];
+  for (let i = 0; i < scam_ids.length; i++) {
+    const id = scam_ids[i];
     const tokens = await extractTokens(id);
-    train("spam", tokens);
-    console.log(`trained ${id} as spam ${i + 1}/${spam_ids.length}`);
+    train("scam", tokens);
+    console.log(`trained ${id} as scam ${i + 1}/${scam_ids.length}`);
   }
 
   for (let i = 0; i < ham_ids.length; i++) {

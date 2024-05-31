@@ -83,86 +83,42 @@ app.get("/v1/nfts/classify", async (req, res) => {
   }
 });
 
-app.get("/cloudflare-img/:id/:imgId", async (req, res) => {
-  try {
-    const nftId = req?.params?.id as string;
-    let imgId = req?.params?.imgId as string;
-    if (!nftId) {
-      return res.status(400).json({ error: "Address is required" });
-    }
-
-    if (!imgId) {
-      imgId = "";
-    } else {
-      imgId = "/" + imgId;
-    }
-
-    const asset: AxiosResponse<any> = await axios.get(
-      `https://suivision.mypinata.cloud/ipfs/${nftId}${imgId}?pinataGatewayToken=XRz-H79S4Su_2PfKu9Ka-W7djbN8b0emIpVtsLxkbnebfobn-IIl-y6Elzyza7p-&img-fit=cover&img-quality=80&img-onerror=redirect&img-fit=pad&img-format=webp`,
-      { responseType: "arraybuffer" }
-    );
-
-    var img = Buffer.from(asset.data, "base64");
-
-    res.writeHead(200, {
-      "Content-Type": "image/png",
-      "Content-Length": img.length,
-    });
-    res.end(img);
-
-    return res;
-  } catch (error) {
-    console.log("err: ", error);
-    res.status(500).json({ error: "ipfs got error" });
-  }
-});
-
-app.get("/cloudflare-img/:id/", async (req, res) => {
-  try {
-    const nftId = req?.params?.id as string;
-    if (!nftId) {
-      return res.status(400).json({ error: "Address is required" });
-    }
-
-    const asset: AxiosResponse<any> = await axios.get(
-      `https://suivision.mypinata.cloud/ipfs/${nftId}?pinataGatewayToken=XRz-H79S4Su_2PfKu9Ka-W7djbN8b0emIpVtsLxkbnebfobn-IIl-y6Elzyza7p-&img-fit=cover&img-quality=80&img-onerror=redirect&img-fit=pad&img-format=webp`,
-      { responseType: "arraybuffer" }
-    );
-    var img = Buffer.from(asset.data, "base64");
-
-    res.writeHead(200, {
-      "Content-Type": "image/png",
-      "Content-Length": img.length,
-    });
-    res.end(img);
-
-    return res;
-  } catch (error) {
-    console.log("err: ", error);
-    res.status(500).json({ error: "ipfs got error" });
-  }
-});
-
 app.get("/read-image", async (req, res) => {
   try {
     const link = req?.query?.link as string;
+    const ipfs = req?.query?.ipfs as string;
 
-    if (!link) {
+    if (!link && !ipfs) {
       return res.status(400).json({ error: "Image Link is missing" });
     }
+    if (link) {
+      const asset: AxiosResponse<any> = await axios.get(link, {
+        responseType: "arraybuffer",
+      });
+      var img = Buffer.from(asset.data, "base64");
 
-    const asset: AxiosResponse<any> = await axios.get(link, {
-      responseType: "arraybuffer",
-    });
-    var img = Buffer.from(asset.data, "base64");
+      res.writeHead(200, {
+        "Content-Type": "image/png",
+        "Content-Length": img.length,
+      });
+      res.end(img);
 
-    res.writeHead(200, {
-      "Content-Type": "image/png",
-      "Content-Length": img.length,
-    });
-    res.end(img);
+      return res;
+    } else {
+      const asset: AxiosResponse<any> = await axios.get(
+        `https://suivision.mypinata.cloud/ipfs/${ipfs}?pinataGatewayToken=XRz-H79S4Su_2PfKu9Ka-W7djbN8b0emIpVtsLxkbnebfobn-IIl-y6Elzyza7p-&img-fit=cover&img-quality=80&img-onerror=redirect&img-fit=pad&img-format=webp`,
+        { responseType: "arraybuffer" }
+      );
+      var img = Buffer.from(asset.data, "base64");
 
-    return res;
+      res.writeHead(200, {
+        "Content-Type": "image/png",
+        "Content-Length": img.length,
+      });
+      res.end(img);
+
+      return res;
+    }
   } catch (error) {
     console.log("error: ", error);
     res.status(400).json({ status: "error", result: "cannot find result" });

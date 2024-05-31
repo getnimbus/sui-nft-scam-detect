@@ -58,10 +58,11 @@ export const extractTokens = async (address: string): Promise<string[]> => {
   //     "https://ipfs.io/ipfs/"
   //   ) ?? ""
   // );
-  let imageData = await getImageData(
-    "https://sui-nft-spam-api.getnimbus.io/read-image?ipfs=" +
-      nft?.display?.data?.image_url?.replace("ipfs://", "") ?? ""
-  );
+  const imageUrl = nft?.display?.data?.image_url?.includes("ipfs://")
+    ? "https://sui-nft-spam-api.getnimbus.io/read-image?ipfs=" +
+      nft?.display?.data?.image_url?.replace("ipfs://", "")
+    : nft?.display?.data?.image_url;
+  let imageData = await getImageData(imageUrl ?? "");
   let imageWords = imageData.imageWords;
   let imageContainsUrl = imageData.imageContainsUrl;
 

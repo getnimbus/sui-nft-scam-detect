@@ -21,7 +21,7 @@ interface NFTInfo {
   image_url: string;
   classification: string;
   ham_likelihood: number;
-  spam_likelihood: number;
+  scam_likelihood: number;
 }
 
 interface NFTDisplayProps {
@@ -36,12 +36,10 @@ const handleClassificationIcon = (textInput: string) => {
   const text = textInput.toLowerCase();
   if (text === "verified") {
     return "✅";
-  } else if (text === "scam" || text === "spam") {
+  } else if (text === "scam") {
     return "❌";
   } else if (text === "image_error") {
     return "The result may be incorrect due to issues reading the NFT image.";
-  } else {
-    return "☑️";
   }
 };
 
@@ -91,7 +89,7 @@ const fetchNFTInfo = async (id: string) => {
       image_url,
       classification: classification?.classification || "image_error",
       ham_likelihood: classification?.ham_likelihood || "--",
-      spam_likelihood: classification?.spam_likelihood || "--",
+      scam_likelihood: classification?.scam_likelihood || "--",
     } as NFTInfo;
 
     return data;
@@ -103,7 +101,7 @@ const fetchNFTInfo = async (id: string) => {
 const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
   const queryClient = useQueryClient();
   const { data, isLoading, isFetching, isError } = useQuery<any>({
-    queryKey: ["nft-spam"],
+    queryKey: ["nft-scam"],
     queryFn: () => fetchNFTInfo(nftObject),
 
     // hardcode for testing please don't delete it
@@ -118,7 +116,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     //       image_url: "https://suicamp.b-cdn.net/suihubcom/suihub_item.jpg",
     //       classification: "scam",
     //       ham_likelihood: 0.004465306355738455,
-    //       spam_likelihood: 0.005257129669189452,
+    //       scam_likelihood: 0.005257129669189452,
     //     });
     //   }),
     enabled: nftObject ? true : false,
@@ -126,7 +124,7 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
   });
 
   useEffect(() => {
-    queryClient.invalidateQueries({ queryKey: ["nft-spam"] });
+    queryClient.invalidateQueries({ queryKey: ["nft-scam"] });
   }, [nftObject]);
 
   const cardData = [
@@ -134,12 +132,9 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
     { label: "Type", desc: data?.type },
     { label: "Name", desc: data?.name },
     { label: "Description", desc: data?.description },
-    {
-      label: "Classification",
-      desc: data?.classification === "spam" ? "scam" : data?.classification,
-    },
+    { label: "Classification", desc: data?.classification },
     { label: "Ham Likelihood", desc: data?.ham_likelihood },
-    { label: "Spam Likelihood", desc: data?.spam_likelihood },
+    { label: "Scam Likelihood", desc: data?.scam_likelihood },
   ];
 
   if (!nftObject) {
@@ -214,9 +209,9 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
                 fontWeight={600}
                 className={`flex w-full whitespace-nowrap pr-2 ${
                   item.label === "Classification"
-                    ? item.desc === "verified"
+                    ? item.desc === "ham"
                       ? "text-green-500"
-                      : item.desc === "scam" || item.desc === "spam"
+                      : item.desc === "scam"
                       ? "text-red-500"
                       : item.desc === "image_error"
                       ? "text-gray-500"
@@ -228,9 +223,10 @@ const NFTDisplay = ({ nftObject }: NFTDisplayProps) => {
                   {item.label}
                 </span>{" "}
                 {(item.label === "Classification"
-                  ? handleClassificationIcon(item.desc) + ` (${item.desc})`
+                  ? handleClassificationIcon(item.desc) +
+                    ` (${item.desc === "scam" ? "Scam" : "Verified"})`
                   : item.label === "Ham Likelihood" ||
-                    item.label === "Spam Likelihood"
+                    item.label === "Scam Likelihood"
                   ? formatCurrency(item.desc)
                   : item.desc) || "..."}
               </Typography>

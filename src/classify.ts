@@ -3,6 +3,9 @@ import { createWorker } from "tesseract.js";
 import { getFullnodeUrl, SuiClient } from "@mysten/sui.js/client";
 import defaultModel from "@resources/model.json";
 
+const THRESHOLD_PRICE = 1; // min price is 1 SUI incase of spam NFT listing
+const THRESHOLD_VOLUME = 100; // min volume is 100 SUI incase of spam NFT listing
+
 const rpcUrl = getFullnodeUrl("mainnet");
 const suiClient = new SuiClient({
   url: process.env.SUI_RPC_NODE || rpcUrl,
@@ -18,8 +21,14 @@ const getImageData = async (imageUrl: string) => {
     });
     const ret = await worker.recognize(imageUrl);
     const imageWords = ret.data.text.split(/\s+/);
-    const imageContainsUrl = imageWords.some((word) =>
-      word.match(/^[\S]+[.][\S]/)
+    const imageContainsUrl = imageWords.some(
+      (word) =>
+        // word.match(/^[\S]+[.][\S]/)
+        word.match(
+          /^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/
+        ) ||
+        word.startsWith("http://") ||
+        word.startsWith("https://")
     );
     worker.terminate();
 
@@ -111,6 +120,12 @@ export const extractTokens = async (address: string): Promise<string[]> => {
       ? "listingMarketplace"
       : "not_listingMarketplace"
   );
+  if (
+    Number(collection?.latestNftPrice || 0) > THRESHOLD_PRICE &&
+    Number(collection?.volume || 0) >= THRESHOLD_VOLUME
+  ) {
+    tokens.push("hasSalesVolume");
+  }
   tokens.push(
     collection?.projectScamMessage || collection?.scamMessage
       ? "scamCollection"
@@ -123,13 +138,14 @@ export const extractTokens = async (address: string): Promise<string[]> => {
 
 const scamNftTokens = [
   "scamCollection",
-  "not_imageExists",
-  "containsEmoji",
   "imageContainsUrl",
+  "containsEmoji",
+  "not_imageExists",
   "not_collectionExists",
 ];
 
 export const classify = (tokens: string[], model: any = defaultModel) => {
+  // if token is in scamNftTokens then it's a scam
   for (const scamToken of scamNftTokens) {
     if (tokens.includes(scamToken)) {
       return {
@@ -138,6 +154,14 @@ export const classify = (tokens: string[], model: any = defaultModel) => {
         ham_likelihood: 0,
       };
     }
+  }
+  // if token has sales and volume then it's a ham
+  if (tokens.includes("hasSalesVolume")) {
+    return {
+      classification: "ham",
+      scam_likelihood: 0,
+      ham_likelihood: 1,
+    };
   }
 
   let scam_likelihood = model.scam.size / (model.scam.size + model.ham.size);

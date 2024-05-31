@@ -34,7 +34,7 @@ const responsiveSize = () => {
 
 const handleClassificationIcon = (textInput: string) => {
   const text = textInput.toLowerCase();
-  if (text === "verified") {
+  if (text === "ham") {
     return "✅";
   } else if (text === "scam") {
     return "❌";

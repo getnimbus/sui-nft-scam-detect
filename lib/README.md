@@ -1,6 +1,6 @@
 # SUI NFT Scam Detector
 
-A lightweight detector scam classifier for NFTs on Sui with 95% accuracy. Can run anywhere that webassembly runs: on a server, in a lambda function, and even running entirely in your browser.
+A lightweight detector scam classifier for NFTs with 95% accuracy. Can run anywhere that webassembly runs: on a server, in a lambda function, and even running entirely in your browser.
 
 Also included is the model training code and data, so you can train and bring your own model if the default model is not performing well.
 
@@ -39,15 +39,6 @@ console.log(result);
 //     "ham_likelihood": 0.0000004214,
 // }
 // 
-```
-
-## Training
-
-1. Input your list of ham and scam in `ham_ids.json` and `scam_ids.json`
-
-2. Run training `model.json`
-```bash
-yarn run train
 ```
 
 ## Testing

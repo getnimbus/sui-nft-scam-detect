@@ -23,7 +23,7 @@ export const FNavbar = () => {
       <AppBar position="static" className="px-4">
         <Toolbar>
           <Typography variant="h5" component="h1" sx={{ flexGrow: 1 }}>
-            Sui NFT Spam Detector
+            Sui NFT Scam Detector
           </Typography>
           <List className="flex gap-4 items-center">
             {navItems.map((item) => (

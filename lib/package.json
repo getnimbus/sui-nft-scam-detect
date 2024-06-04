@@ -1,0 +1,28 @@
+{
+  "name": "nft-scam-detector",
+  "version": "1.0.1",
+  "description": "A lightweight detector scam classifier for NFTs with 95% accuracy. Can run anywhere that webassembly runs: on a server, in a lambda function, and even running entirely in your browser.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "nft",
+    "scam detector",
+    "web3",
+    "blockchain"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "toanbk21096@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "tesseract.js": "^5.1.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

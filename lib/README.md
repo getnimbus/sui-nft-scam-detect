@@ -30,7 +30,7 @@ import { extractAndClassify } from "nft-scam-detector";
 const imageUrl = "YOUR_NFT_IMAGE_URL";
 const result = extractAndClassify(imageUrl);
 
-console.log(result);
+result.then(console.log);
 // result here 
 // 
 // {

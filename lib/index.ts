@@ -13,9 +13,10 @@ const getImageData = async (imageUrl: string) => {
     const imageWords = ret.data.text.split(/\s+/);
     const imageContainsUrl = imageWords.some(
       (word) =>
-        word.match(
-          /^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/
-        ) ||
+        (isNaN(Number(word)) &&
+          word.match(
+            /^((?!-))(xn--)?[a-z0-9][a-z0-9-_]{0,61}[a-z0-9]{0,1}\.(xn--)?([a-z0-9\-]{1,61}|[a-z0-9-]{1,30}\.[a-z]{2,})$/ // domain regex
+          )) ||
         word.startsWith("http://") ||
         word.startsWith("https://")
     );
@@ -90,7 +91,11 @@ export const classify = (tokens: string[], model: any = defaultModel) => {
 
 export const extractAndClassify = async (
   imageUrl: string
-): Promise<{ classification: string }> => {
+): Promise<{
+  classification: string;
+  scam_likelihood: number;
+  ham_likelihood: number;
+}> => {
   const tokens = await extractTokens(imageUrl);
   return classify(tokens);
 };

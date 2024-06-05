@@ -187,7 +187,11 @@ export const classify = (tokens: string[], model: any = defaultModel) => {
 
 export const extractAndClassify = async (
   address: string
-): Promise<{ classification: string }> => {
+): Promise<{
+  classification: string;
+  scam_likelihood: number;
+  ham_likelihood: number;
+}> => {
   const tokens = await extractTokens(address);
   return classify(tokens);
 };

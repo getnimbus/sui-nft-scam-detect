@@ -1,4 +1,4 @@
-# SUI NFT Scam Detector
+# NFT Scam Detector
 
 A lightweight detector scam classifier for NFTs with 95% accuracy. Can run anywhere that webassembly runs: on a server, in a lambda function, and even running entirely in your browser.
 

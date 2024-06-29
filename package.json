@@ -1,6 +1,6 @@
 {
   "name": "nft-scam-detector",
-  "version": "1.0.6",
+  "version": "1.0.0",
   "description": "A lightweight detector scam classifier for NFTs with 95% accuracy. Can run anywhere that webassembly runs: on a server, in a lambda function, and even running entirely in your browser.",
   "main": "index.js",
   "scripts": {

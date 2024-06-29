@@ -2,7 +2,11 @@
   "scam": {
     "tokens": {
       "5000": 2,
-      "jupiter": 2,
+      "jupiter": 11,
+      "wif": 11,
+      "jup": 11,
+      "bonk": 11,
+      "sol": 11,
       "this": 9,
       "airdrop": 5,
       "pass": 3,
@@ -32,6 +36,8 @@
       "been": 9,
       "awarded": 8,
       "voucher": 14,
+      "limited": 14,
+      "drop": 14,
       "exclusive": 8,
       "claim": 8,
       "link:": 2,
@@ -62,7 +68,6 @@
   },
   "ham": {
     "tokens": {
-      "drop": 6,
       "season": 3,
       "common": 7,
       "rarity": 10,
@@ -79,9 +84,7 @@
       "earring": 2,
       "mouth": 3,
       "serra": 2,
-      "sate": 2,
-      "imageContainsUrl": 3,
-      "containsEmoji": 1
+      "sate": 2
     },
     "size": 19
   }
